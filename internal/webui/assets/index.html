@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Focus — список задач</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <p class="eyebrow">Минимальный task tracker</p>
+      <h1>Держи фокус.</h1>
+      <p class="subtitle">Добавляй задачи, отмечай готовое и убирай лишнее.</p>
+    </header>
+
+    <section class="panel" aria-label="Новая задача">
+      <form id="task-form">
+        <input id="title" name="title" maxlength="200" placeholder="Что нужно сделать?" required autocomplete="off">
+        <textarea id="description" name="description" rows="2" placeholder="Описание — необязательно"></textarea>
+        <button type="submit">Добавить</button>
+      </form>
+    </section>
+
+    <section class="list-section">
+      <div class="list-heading">
+        <h2>Задачи</h2>
+        <span id="counter">0</span>
+      </div>
+      <p id="message" role="status"></p>
+      <ul id="tasks"></ul>
+    </section>
+  </main>
+
+  <template id="task-template">
+    <li class="task">
+      <label class="check"><input type="checkbox"><span></span></label>
+      <div class="task-copy"><strong></strong><p></p></div>
+      <button class="edit" type="button" aria-label="Редактировать">✎</button>
+      <button class="delete" type="button" aria-label="Удалить">×</button>
+    </li>
+  </template>
+  <script src="/app.js?v=2" defer></script>
+</body>
+</html>
