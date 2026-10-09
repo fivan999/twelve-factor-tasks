@@ -9,9 +9,8 @@ RUN CGO_ENABLED=0 go test ./... && \
 
 FROM docker.io/library/alpine:3.21
 RUN apk add --no-cache ca-certificates && adduser -D -u 10001 app
-COPY --from=build /out/server /app/server
-COPY --from=build /out/migrate /app/migrate
+COPY --from=build --chown=app:app /out/server /app/server
+COPY --from=build --chown=app:app /out/migrate /app/migrate
 USER app
 EXPOSE 8080
 ENTRYPOINT ["/app/server"]
-

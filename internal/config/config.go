@@ -14,9 +14,12 @@ type Config struct {
 
 func Load() (Config, error) {
 	cfg := Config{
-		Port:            envOrDefault("PORT", "8080"),
+		Port:            os.Getenv("PORT"),
 		DatabaseURL:     os.Getenv("DATABASE_URL"),
 		ShutdownTimeout: 10 * time.Second,
+	}
+	if cfg.Port == "" {
+		return Config{}, fmt.Errorf("PORT is required")
 	}
 	if cfg.DatabaseURL == "" {
 		return Config{}, fmt.Errorf("DATABASE_URL is required")
@@ -29,11 +32,4 @@ func Load() (Config, error) {
 		cfg.ShutdownTimeout = d
 	}
 	return cfg, nil
-}
-
-func envOrDefault(key, fallback string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return fallback
 }

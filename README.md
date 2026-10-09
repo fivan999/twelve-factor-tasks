@@ -4,7 +4,13 @@
 
 ## Быстрый запуск через Podman
 
-Нужны только `podman` и `make`:
+Нужны `podman` и `make`. Создайте локальный файл конфигурации:
+
+```bash
+cp .env.example .env
+```
+
+Файл `.env` не попадает в Git. После настройки запустите приложение:
 
 ```bash
 make up
@@ -27,6 +33,10 @@ podman volume rm twelve-factor-tasks-data
 ```bash
 podman compose up --build
 ```
+
+`PORT`, `DATABASE_URL`, `POSTGRES_USER`, `POSTGRES_PASSWORD` и `POSTGRES_DB` обязательны. `SHUTDOWN_TIMEOUT` по умолчанию равен `10s`. Значения из `.env.example` предназначены только для локальной разработки. В production передавайте реквизиты PostgreSQL через менеджер секретов среды выполнения.
+
+Перед первым запуском замените `change-me` в `POSTGRES_PASSWORD` и в `DATABASE_URL` на одно и то же локальное значение. Если volume PostgreSQL уже создан, изменение переменной не меняет пароль в существующей базе: используйте прежнее значение или создайте новый volume, если данные больше не нужны.
 
 ## CRUD API
 
@@ -65,7 +75,7 @@ internal/webui/assets   фронтенд, встроенный через go:emb
 
 1. **Codebase** — один репозиторий, конфигурация деплоя лежит рядом с кодом.
 2. **Dependencies** — Go-зависимости объявлены в `go.mod`, окружение изолировано контейнером.
-3. **Config** — `PORT`, `DATABASE_URL`, `SHUTDOWN_TIMEOUT` читаются из environment; секреты не зашиты в бинарник.
+3. **Config** — `PORT`, `DATABASE_URL`, `SHUTDOWN_TIMEOUT` читаются из environment; `PORT` и `DATABASE_URL` обязательны, секреты не зашиты в бинарник.
 4. **Backing services** — PostgreSQL подключается только через `DATABASE_URL` и может быть заменён внешним экземпляром.
 5. **Build, release, run** — `Containerfile` создаёт артефакт, мигратор оформлен отдельной release-стадией, сервер только запускает приложение.
 6. **Processes** — HTTP-сервер stateless; состояние находится в PostgreSQL.
@@ -78,10 +88,9 @@ internal/webui/assets   фронтенд, встроенный через go:emb
 
 ## Запуск без контейнера приложения
 
-Если Go установлен локально, поднимите PostgreSQL, скопируйте `.env.example` в `.env`, экспортируйте переменные и выполните:
+Если Go установлен локально, поднимите PostgreSQL и экспортируйте `PORT`, `DATABASE_URL` и при необходимости `SHUTDOWN_TIMEOUT`. В `DATABASE_URL` укажите доступный с хоста адрес PostgreSQL, например `localhost`, а не имя контейнера `db`. Затем выполните:
 
 ```bash
 go run ./cmd/migrate
 go run ./cmd/server
 ```
-
