@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: focus-config
+  namespace: focus
+  labels:
+    app.kubernetes.io/part-of: focus
+data:
+  PORT: "8080"
+  SHUTDOWN_TIMEOUT: 10s

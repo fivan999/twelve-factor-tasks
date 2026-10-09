@@ -7,7 +7,7 @@ ENV_FILE ?= .env
 
 -include $(ENV_FILE)
 
-.PHONY: check-env build network db wait-db migrate app up down logs test
+.PHONY: check-env build network db wait-db migrate app up down logs test minikube-up k8s-status k8s-scale k8s-url
 
 check-env:
 	@test -f "$(ENV_FILE)" || (echo "Missing $(ENV_FILE). Copy .env.example to $(ENV_FILE) and set local credentials."; exit 1)
@@ -53,3 +53,16 @@ logs:
 
 test:
 	podman build --target build -t $(IMAGE)-test -f Containerfile .
+
+minikube-up:
+	./scripts/minikube-up.sh
+
+k8s-status:
+	kubectl -n focus get pods,services,jobs,persistentvolumeclaims
+
+k8s-scale:
+	kubectl -n focus scale deployment/focus --replicas=3
+	kubectl -n focus rollout status deployment/focus --timeout=180s
+
+k8s-url:
+	minikube service focus -n focus --url

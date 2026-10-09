@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: focus
+  namespace: focus
+  labels:
+    app.kubernetes.io/name: focus
+    app.kubernetes.io/part-of: focus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: focus
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: focus
+        app.kubernetes.io/part-of: focus
+    spec:
+      terminationGracePeriodSeconds: 15
+      containers:
+        - name: focus
+          image: localhost/twelve-factor-tasks:week2
+          imagePullPolicy: Never
+          envFrom:
+            - configMapRef:
+                name: focus-config
+            - secretRef:
+                name: focus-secrets
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: focus
+  namespace: focus
+  labels:
+    app.kubernetes.io/name: focus
+    app.kubernetes.io/part-of: focus
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: focus
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      nodePort: 30080

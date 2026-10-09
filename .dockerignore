@@ -2,4 +2,8 @@
 .env
 README.md
 compose.yaml
-
+build
+deploy/k8s/secret.env
+*.zip
+*.mp4
+*.mov

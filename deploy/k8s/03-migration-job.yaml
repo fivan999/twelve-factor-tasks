@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: focus-migrate
+  namespace: focus
+  labels:
+    app.kubernetes.io/name: focus-migrate
+    app.kubernetes.io/part-of: focus
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: focus-migrate
+        app.kubernetes.io/part-of: focus
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: migrate
+          image: localhost/twelve-factor-tasks:week2
+          imagePullPolicy: Never
+          command:
+            - /app/migrate
+          envFrom:
+            - configMapRef:
+                name: focus-config
+            - secretRef:
+                name: focus-secrets
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

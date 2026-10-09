@@ -2,4 +2,7 @@
 .idea/
 .vscode/
 bin/
-
+build/
+deploy/k8s/secret.env
+*.mp4
+*.mov

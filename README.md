@@ -58,6 +58,38 @@ podman compose up --build
 }
 ```
 
+## Запуск в Minikube через Podman
+
+Нужны `podman`, `minikube`, `kubectl` и `make`. Docker и Docker daemon не используются. На macOS Podman driver для Minikube работает через rootful Podman Machine. Если текущая машина нужна в rootless-режиме, удобнее создать отдельную:
+
+```bash
+podman machine init --rootful --cpus 4 --memory 6144 minikube-podman
+podman machine start minikube-podman
+podman system connection default minikube-podman-root
+```
+
+Создайте локальный файл с учебными реквизитами PostgreSQL и замените оба значения `change-me` одним паролем:
+
+```bash
+cp deploy/k8s/secret.env.example deploy/k8s/secret.env
+```
+
+Полный запуск кластера, сборка OCI-образа через Podman, загрузка образа в Minikube и развёртывание:
+
+```bash
+make minikube-up
+```
+
+Основные команды демонстрации:
+
+```bash
+make k8s-status
+make k8s-scale
+make k8s-url
+```
+
+`make k8s-scale` увеличивает число реплик HTTP-сервера до трёх. PostgreSQL остаётся в одной реплике с `PersistentVolumeClaim`. Подробное описание приведено в `Week-2-Report.md`, а порядок записи видео — в `Screencast-Scenario.md`.
+
 ## Устройство
 
 ```text
