@@ -7,3 +7,4 @@ deploy/k8s/secret.env
 *.zip
 *.mp4
 *.mov
+*.webm
